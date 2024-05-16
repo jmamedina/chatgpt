@@ -1,4 +1,6 @@
 "use client";
+
+// Import Firebase-related libraries
 import { db } from "@/firebase";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid"
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
@@ -7,24 +9,32 @@ import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import ModelSelection from "./ModelSelection";
 
+// Define Props type
 type Props = {
     chatId: string
 }
 
+// Definition of the ChatInput component
 function ChatInput({ chatId }: Props) {
+    // State to manage the prompt
     const [prompt, setPrompt] = useState("");
+    // Get the user session
     const { data: session } = useSession();
 
+    // Define the model to be used
     const model = "gpt-3.5-turbo-instruct";
 
+    // Function to send messages
     const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         if (!prompt) return;
 
+        // Trim the input
         const input = prompt.trim();
         setPrompt("");
 
+        // Construct the message object
         const message = {
             text: input,
             createdAt: serverTimestamp(),
@@ -35,6 +45,7 @@ function ChatInput({ chatId }: Props) {
             }
         }
 
+        // Add the message to Firestore
         await addDoc(collection(db,
             'users',
             session?.user?.email!,
@@ -47,6 +58,7 @@ function ChatInput({ chatId }: Props) {
         //Toast notification
         const notification = toast.loading("Jose is thinking...");
 
+        // Send the prompt to the backend for processing
         await fetch('/api/askQuestion', {
             method: 'POST',
             headers: {
@@ -66,7 +78,7 @@ function ChatInput({ chatId }: Props) {
         });
     };
 
-
+    // Rendering of the ChatInput component
     return (
         <div className="bg-white/50 text-gray-800 rounded-lg text-sm shadow-md">
             <form onSubmit={sendMessage} className="p-4 space-x-4 flex items-center">
@@ -76,7 +88,7 @@ function ChatInput({ chatId }: Props) {
                     value={prompt}
                     onChange={e => setPrompt(e.target.value)}
                     type="text"
-                    placeholder="Type your message here..."
+                    placeholder="Type your message here..." // ここにメッセージを入力してください...
                 />
 
                 <button
@@ -94,4 +106,5 @@ function ChatInput({ chatId }: Props) {
     )
 }
 
+// Export the ChatInput component
 export default ChatInput
