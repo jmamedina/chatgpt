@@ -1,11 +1,11 @@
 "use client";
-
 import { db } from "@/firebase";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid"
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
+import ModelSelection from "./ModelSelection";
 
 type Props = {
     chatId: string
@@ -15,7 +15,6 @@ function ChatInput({ chatId }: Props) {
     const [prompt, setPrompt] = useState("");
     const { data: session } = useSession();
 
-    // use SWR toget model
     const model = "gpt-3.5-turbo-instruct";
 
     const sendMessage = async (e: FormEvent<HTMLFormElement>) => {
@@ -26,7 +25,7 @@ function ChatInput({ chatId }: Props) {
         const input = prompt.trim();
         setPrompt("");
 
-        const message: Message = {
+        const message = {
             text: input,
             createdAt: serverTimestamp(),
             user: {
@@ -46,7 +45,7 @@ function ChatInput({ chatId }: Props) {
         )
 
         //Toast notification
-        const notification = toast.loading("ChatGPT is thinking...");
+        const notification = toast.loading("Jose is thinking...");
 
         await fetch('/api/askQuestion', {
             method: 'POST',
@@ -69,10 +68,10 @@ function ChatInput({ chatId }: Props) {
 
 
     return (
-        <div className="bg-gray-700/50 text-gray-400 rounded-lg text-sm">
-            <form onSubmit={sendMessage} className="p-5 space-x-5 flex">
+        <div className="bg-white/50 text-gray-800 rounded-lg text-sm shadow-md">
+            <form onSubmit={sendMessage} className="p-4 space-x-4 flex items-center">
                 <input
-                    className="bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300"
+                    className="bg-transparent focus:outline-none flex-1 text-gray-800"
                     disabled={!session}
                     value={prompt}
                     onChange={e => setPrompt(e.target.value)}
@@ -82,14 +81,14 @@ function ChatInput({ chatId }: Props) {
 
                 <button
                     disabled={!prompt || !session}
-                    className="bg-[#11A37F] hover:opacity-50 text-white font-bold px-4 py-2 rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
+                    className="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
                     type="submit">
-                    <PaperAirplaneIcon className="h-4 w-4 -rotate-45" />
+                    <PaperAirplaneIcon className="h-5 w-5 -rotate-45" />
                 </button>
             </form>
 
-            <div>
-
+            <div className="md:hidden">
+                <ModelSelection />
             </div>
         </div>
     )

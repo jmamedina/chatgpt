@@ -7,7 +7,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import ClientProvider from "@/components/ClientProvider";
 
 export const metadata = {
-  title: 'ChatGPT Clone',
+  title: 'JoseGPT',
 }
 
 export default async function RootLayout({
@@ -19,21 +19,20 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className="bg-gray-100">
         <SessionProvider session={session}>
           {!session ? (
             <Login />
           ) : (
             <div className="flex">
-              { /*Sidebar */}
-              <div className="bg-[#202123] max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
+
+              <div className="bg-blue-600 max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
                 <Sidebar />
               </div>
 
-              { /* Client provider = Notification */}
               <ClientProvider />
 
-              <div className="bg-[#343541] flex-1">{children}</div>
+              <div className="bg-gray-200 flex-1">{children}</div>
             </div>
           )}
         </SessionProvider>
